@@ -1,3 +1,4 @@
+const UserDTO = require("../dao/DTOs/UserDTO");
 const { usersService } = require("../repositories")
 
 class UsersControrller {
@@ -5,8 +6,8 @@ class UsersControrller {
     static async getAll(req, res){
         try {
             const users = await usersService.getAll();
-            
-            res.send({status:'success', payload: users})
+            const userDTOs = users.map(user=>new UserDTO(user))
+            res.send({status:'success', payload: userDTOs})
         } catch (error) {
             res.status(500).send({status:'error', error: error.message})
         }
