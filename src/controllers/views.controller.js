@@ -1,4 +1,4 @@
-const {cartsService, itemsService } = require('../repositories')
+const {cartsService, itemsService, usersService } = require('../repositories')
 
 class ViewsController {
     static async getHome(req, res){
@@ -99,6 +99,20 @@ class ViewsController {
     static getPasswordChangeForm(req, res){
         try{
             res.render('password-change',{user: {}})
+        } catch (error) {
+            res.status(error.status || 500).send({status:'error', error: error.message})
+        }
+    }
+    static async getUsersMananger(req, res){
+        try{
+            const users = await usersService.getAll();
+            const usersWithRoleFlags = users.map(user=>{
+                user.isUser = user.role == 'user'
+                user.isPremium = user.role == 'premium'
+                user.isAdmin = user.role == 'admin'
+                return user;
+            })
+            res.render('users-mananger',{users: users})
         } catch (error) {
             res.status(error.status || 500).send({status:'error', error: error.message})
         }

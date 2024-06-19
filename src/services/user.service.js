@@ -1,3 +1,6 @@
+const MailingService = require("./mailing.service");
+
+const mailingService = new MailingService();
 
 class UsersService {
     constructor(dao){
@@ -37,7 +40,7 @@ class UsersService {
 
     async setLastConnection(id){
         const user = await this.getById(id);
-        await this.update(id, {last_connection: new Date().toLocaleString()})
+        await this.update(id, {last_connection: new Date()})
     }
 
     async addDocuments(id, files){
@@ -78,6 +81,39 @@ class UsersService {
 
         await this.update(user._id.toString(), {$set: {role: user.role}})
         return await this.getById(userId)
+    }
+
+    async deleteUnactive(){
+        const users = await this.getAll();
+        const now = new Date();
+        let deletedCount = 0; 
+
+        //usar users.every o for of 
+        //evitemos usar users.foreach si dentro vamos a hacer operaicones asincrónicas
+        // users.every(()=>{
+        //     return true; 
+        // })
+        
+        const TOLERABLE_TIME = 60 * 24 * 2; //cantidad de minutos equivalente a dos días
+
+        for(const user of users){
+            if(user.last_connection){
+                if(this.getMinutesDifference(now, user.last_connection) > TOLERABLE_TIME ){
+                    await this.delete(user._id);
+                    await mailingService.sendDeletedAccountMail(user.first_name, user.email)
+                    deletedCount++;
+                }
+            }
+        }
+
+        return deletedCount; 
+    }
+
+    getMinutesDifference(now, last_connection){
+        let milisecondsDif = now - last_connection
+        let minutes =  Math.round((milisecondsDif/1000)/60)
+        console.log("minutes", minutes)
+        return minutes; 
     }
 }
 

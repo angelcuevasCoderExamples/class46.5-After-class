@@ -46,6 +46,40 @@ class UsersControrller {
         }
     }
 
+    static async deleteUnactive(req, res){
+        try {
+            const deletedCount = await usersService.deleteUnactive()
+
+            res.send({status:'success', payload: {deletedCount}})
+        } catch (error) {
+            res.status(500).send({status:'error', error: error.message})
+        }
+    }
+
+    static async updateUser(req, res){
+
+        const uid = req.params.uid; 
+        const {role} = req.body;
+        try {
+            const payload = await usersService.update(uid,{role});
+            res.send({status:'success', payload: payload})
+        } catch (error) {
+            res.status(500).send({status:'error', error: error.message})
+        }
+    }
+
+    static async deleteUser(req, res){
+
+        const uid = req.params.uid; 
+
+        try {
+            const payload = await usersService.delete(uid);
+            res.send({status:'success', payload: payload})
+        } catch (error) {
+            res.status(500).send({status:'error', error: error.message})
+        }
+    }
+
 }
 
 module.exports = UsersControrller

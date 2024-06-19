@@ -1,0 +1,51 @@
+<h1> Users manager</h1>
+
+
+{{#each users}}
+    <div style="background: gray; margin:5px;">
+        <p>First_name: {{this.first_name}}</p>
+        <p>email: {{this.email}}</p>
+        <select name="" id="select-{{this._id}}">
+            {{#if this.isUser}} <option value="user" selected>user</option>{{else}} <option value="user">user</option> {{/if}}
+            {{#if this.isPremium}} <option value="premium" selected>premium</option>{{else}} <option value="premium">premium</option> {{/if}}
+            {{#if this.isAdmin}} <option value="admin" selected>admin</option>{{else}} <option value="admin">admin</option> {{/if}}
+        </select>
+        <button onclick="updateUser('{{this._id}}')">Update Role</button>
+        <button onclick="updateUser('{{this._id}}')" style="color: red;">Delete user</button>
+    </div>
+{{/each}}
+
+
+<script>
+
+    function updateUser(id){
+        const newRole = document.getElementById(`select-${id}`).value; 
+        
+        fetch(`http://localhost:8080/api/users/${id}`, {
+            method:'PUT',
+            body: JSON.stringify({role:newRole}),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        }).then((res)=>{
+            if(res.status == 200){
+                window.location.reload();
+            }
+        })
+    }
+    function deleteUser(id){
+        const newRole = document.getElementById(`select-${id}`).value; 
+        
+        fetch(`http://localhost:8080/api/users/${id}`, {
+            method:'DELETE',
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        }).then((res)=>{
+            if(res.status == 200){
+                window.location.reload();
+            }
+        })
+    }
+
+</script>
