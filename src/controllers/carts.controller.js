@@ -91,7 +91,9 @@ class CartsController {
             const remainderItems = await cartsService.purchase(id, req.user.email)
            
             
+            //res.redirect('/purchase-success')
             res.send({status:'success', payload: remainderItems})
+        
         } catch (error) {
             console.log(error)
             return res.status(error.status || 500).send({status:'error', error:error.message})

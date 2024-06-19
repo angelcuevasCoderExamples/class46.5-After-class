@@ -37,6 +37,7 @@ router.get('/reset-password', ViewsController.getPasswordResetForm)
 router.get('/change-password', ViewsController.getPasswordChangeForm)
 
 router.get('/users-manager', checkRole('admin'), ViewsController.getUsersMananger)
+router.get('/purchase-success', ViewsController.getPurchaseSuccess)
 
 router.get('*', ViewsController.get404)
 

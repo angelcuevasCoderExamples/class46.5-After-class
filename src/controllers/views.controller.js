@@ -103,6 +103,13 @@ class ViewsController {
             res.status(error.status || 500).send({status:'error', error: error.message})
         }
     }
+    static getPurchaseSuccess(req, res){
+        try{
+            res.render('purchase-success')
+        } catch (error) {
+            res.status(error.status || 500).send({status:'error', error: error.message})
+        }
+    }
     static async getUsersMananger(req, res){
         try{
             const users = await usersService.getAll();
