@@ -1,6 +1,9 @@
 const { itemsService } = require('../repositories/index');
+const MailingService = require('../services/mailing.service');
 const CustomError = require('../utils/errorHandling/CustomError');
 const ErrorTypes = require('../utils/errorHandling/ErrorTypes');
+
+const mailingService = new MailingService();
 
 class ItemsController {
     static async getAll(req, res){
@@ -77,6 +80,10 @@ class ItemsController {
             const item = await itemsService.getById(id);
             if(req.user.role == 'premium' && item.owner != req.user.email){
                 throw new Error(`can't delete item. It does not belong to you`) 
+            }
+
+            if(item.owner && item.owner != "admin"){
+                await mailingService.sendDeletedPremiumItemMail(item.owner, item.description)
             }
 
             const result = await itemsService.delete(id);

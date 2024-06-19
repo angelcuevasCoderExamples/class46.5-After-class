@@ -61,6 +61,19 @@ class MailingService {
             `
         })
     }
+    async sendDeletedPremiumItemMail(destinationMail, itemDescription){
+
+        await transport.sendMail({
+            from: `Node service <${mailing.auth.user}>`,
+            to: destinationMail,
+            subject: `Password reset`,
+            html: `
+                <div>
+                    <h1>We're sorry to let you know that your item "${itemDescription}" was deleted by an admin user. Sorry for the inconvinience</h1>
+                </div>
+            `
+        })
+    }
 }
 
 module.exports = MailingService; 
